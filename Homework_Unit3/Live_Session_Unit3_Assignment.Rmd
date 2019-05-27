@@ -1,0 +1,210 @@
+---
+title: "Live Session Unit 3 Assignment"
+author: "Matt Chinchilla"
+date: "5/25/2019"
+output: html_document
+Keep_md: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Questions
+
+# 1
+
+Cloned the repository from https://github.com/caesar0301/awesome-public-datasets and moved to my Unit 3 folder that I created in Dropbox to use on my local machine.
+
+# 2a
+
+```{r df}
+#Assign df to read titanic.csv from cloned file
+df <- read.csv(file = "/Users/matt/Dropbox/Doing Data Science/Unit 3/awesome-public-datasets/Datasets/titanic.csv")
+```
+
+# 2b
+```{r countM&F}
+#Count of Males and Females
+#Access plyr library
+library(plyr)
+#count the number of males and female passangers
+count(df$Sex)
+```
+
+```{r PlotM&F}
+#Plot Male and Female counts
+#Access ggplot2 library
+library(ggplot2)
+
+#Create bar chart of Male vs female passanger count aboard the Titanic
+ggplot(df, aes(Sex)) + geom_bar() + geom_text(stat = "count", aes(label=..count..), vjust=-1) + ggtitle("Count of Males and Females on the Titanic")
+```
+
+# 2c
+```{r applymean}
+#Create variable testdata to get Survived, Age, and Fare column data
+testdata <- df[, c(2,6,10)]
+
+#Create a new variable that omits all the NA's from testdata called testdata2
+testdata2 <- na.omit(testdata)
+
+#Use sapply to find the mean for the columns in testdata2
+sapply(testdata2, mean)
+```
+
+# 3
+Download sleep_data_01.csv from http://talklab.psy.gla.ac.uk/L1_labs/lab_1/homework/index.html
+```{r sleepdata}
+#Load sleep_data_01.csv into R variable sleepdata
+sleepdata <- read.csv("/Users/matt/Dropbox/Doing Data Science/Unit 3/Homework_Unit3/sleep_data_01.csv")
+
+#Create a new variable to Remove NA values from sleepdata called sleepdata2
+sleepdata2 <- na.omit(sleepdata)
+```
+
+# 3a
+```{r variables}
+# Median age variable called agemed
+agemed <- median(sleepdata2$Age)
+agemed
+
+#durmin variable that contains the minimum duration of sleep
+durmin <- min(sleepdata2$Duration)
+durmin
+
+#durmax variable that contains the maximum duration of sleep
+durmax <- max(sleepdata2$Duration)
+durmax
+
+#rsesmean variable that contains the mean of Rosenberg Self Esteem scale (RSES)
+rsesmean <- mean(sleepdata2$RSES)
+rsesmean
+
+#rsessd variable that contains the standard deviation of Rosenberg Self Esteem scale (RSES)
+rsessd <- sd(sleepdata2$RSES)
+rsessd
+```
+
+# 3b
+```{r dataframe}
+#rsesmean2 variable to divide the mean of RSES by 5
+rsesmean2 <- rsesmean/5
+
+#rsessd2 variable to divide the standard deviation of RSES by 5
+rsessd2 <- rsessd/5
+
+#durg variable that contains the statistical range of duration 
+durrg <- durmax - durmin
+
+#Create a data frame called report 
+report <- data.frame(agemed, rsesmean2, rsessd2, durrg)
+report
+```
+
+# 3c
+```{r RenameColumns}
+#Rename the first column of report from agmed to MedianAge
+names(report)[names(report) == "agemed"] <- "MedianAge"
+
+#Rename the second column of report from rsesmean2 to SelfEsteem
+names(report)[names(report) == "rsesmean2"] <- "SelfEsteem"
+
+#Rename the thrid column of report from rsessd2 to SE_SD
+names(report)[names(report) == "rsessd2"] <- "SE_SD"
+
+#Rename the fourth column of report from durrg to DurationRange
+names(report)[names(report) == "durrg"] <- "DurationRange"
+
+#Report data frame with new column names
+report
+```
+
+# 3d
+```{r round}
+#Round report data to 2 digits 
+report <- round(report, 2)
+```
+
+# 3e
+```{r RunReport}
+#Display the report function
+report
+```
+
+# 4a
+```{r install5308}
+#install fivethirtyeight package from https://github.com/rudeboybert/fivethirtyeight
+#install.packages("fivethirtyeight") 
+
+#load fivethiryeight library
+library(fivethirtyeight)
+```
+
+# 4b
+```{r review5308}
+#Look at data sets included in package "fivethirtyeight" and determine 22nd data set and assign to variable df
+
+#Steps
+#1) Assign package data to a variable pkg5308
+pkg5308 <- data(package = "fivethirtyeight")
+
+#2) View the list of datasets included in the "fivethirtyeight" package find the 22nd "college_recent_grads"
+pkg5308$results[, "Item"]
+
+#3) Assign the "college_recent_grads" data set to variable df
+df <- fivethirtyeight::college_recent_grads
+```
+
+# 4c
+```{r 5308vignette}
+#use the vingnette to see information about the "fivethiryteight" package and related data sets
+#vignette("fivethirtyeight", package = "fivethirtyeight")
+
+#data set #22 "college_recent_grads related URL
+#http://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/
+```  
+
+# 4d
+```{r summaryofdf}
+#list of column names of df ("college_recent_grads") data frame
+colnames(df)
+
+#Dimensions of df ("college_recent_grads") data frame
+dim(df)
+```
+
+# 5a
+```{r q5comands}
+#list of column names of df ("college_recent_grads") data frame
+colnames(df)
+
+#Numer of columns in df ("college_recent_grads") data frame
+ncol(df)
+```
+
+# 5b
+```{r major_count}
+#Install the plyr library if not already installed using the command below
+#library(plyr)
+
+#Using count function in plry to count the frequecy of unique values in the "major_category" column in df. Assign variable major_count
+major_count <- count(df, vars = "major_category")
+major_count
+```
+
+# 5c
+```{r horizbarplot}
+#Horizontal bar chart that shows the majors and frequency of occurance in the "major_category" column of the df data set.
+par(las = 2)
+barplot(major_count$freq, main = "Unique Majors and count of frequency", names.arg = major_count$major_category, horiz = TRUE, col = "purple", xlab = "Frequency", ylab = "Majors")
+```
+
+# 5d
+```{r csv}
+#Write major counts to a .csv file excluding the row lables.
+write.csv(major_count, file = "major_count.csv", row.names = FALSE)
+```
+
+# 6
+Git HW reposity
+https://github.com/Chinchillin1981/DDS6303HW.git
