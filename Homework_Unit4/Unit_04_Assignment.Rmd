@@ -10,22 +10,124 @@ Keep_md: True
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## 1b
+```{r}
+#Steps
+#1)Load the following libraries
+library(XML)
+library(xml2)
+library(dplyr)
+library(tidyr)
+library(stringi)
+library(RCurl)
+library(rvest)
+library(rmarkdown)
+library(knitr)
+library(ggplot2)
+#1) Read the Harry Potters page html
+URL <- url("https://www.imdb.com/title/tt1201607/fullcredits?ref_=tt_ql_1")
+Cast <- read_html(URL)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#2)Go to the website and use the developers tools to look at the website sorce code. Find the root tag (top level) with the Cast data in this case the root tag is called "table"
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#3)You want all the nodes that are nested under "table"
+Castnd <- html_nodes(Cast, "table")
 
-```{r cars}
-summary(cars)
+#3)To view the nodes included in Castnd you should put them into a table so they can be analized. In this case we are calling our table "Cast_table"
+Cast_table <- html_table(Castnd)
+
+#4)User the data viewer to view the list of nodes in the html_table "Cast_table" find the node that contains the cast in credit order list. In this case it's node #3
+#View(Cast_table)
+
+#5) Create a data frame that includes the data from node #3 called Castdf
+Castdf <- data.frame(Cast_table[3])
 ```
 
-## Including Plots
+## 1c Cleaning data
+```{r}
+#Steps
+#1) Using the dim function we get an idea of what the Castdf data frame dimensions are. This data frame has 152 rows and 4 columns
+dim(Castdf)
 
-You can also embed plots, for example:
+#2) Use the internal viewer to take a look at the columns and data. In this data set I noticed that the first column is does not contain any data (X1) and the third column does not contain any data that we are interested in.
+#View(Castdf)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#2a)The head function can also be used to view the first few columns of the data.
+head(Castdf)
+
+#3)Use the subset function to remove the columns we don't need. Create a new data frame that contains only the columns with data we need (X2, X4) from the original Castdf Data frame called Castdf2. Use the head function to view the first few rows of the new data frame.
+Castdf2 <- subset(Castdf, select = -c(X1,X3))
+head(Castdf2)
+
+#)Rename the columns of the Castdf2 data frame Actor and Character.
+#Rename column 1 Actors
+names(Castdf2)[1] <- "Actors"
+#Rename column 2 Characters
+names(Castdf2)[2] <- "Characters"
+#Use head to confirm the data frame columns have the correct names
+head(Castdf2)
+
+#Update David Warwick's Character new to “Griphook / Professor Filius Flitwick” 
+Castdf2$Character[11] <- "Griphook / Professor Filius Flitwick"
+
+# Create a new Data Frame Castdf3 in which we remove the first row wich has no data and row 93 which says "Rest of cast listed alphabetically". Preserve =False will recalculate the position values after removing the two rows.
+Castdf3 <- slice(Castdf2, -c(1,93),.preserve = FALSE)
+#Preview Data in a table on the rmarkdown page
+paged_table(Castdf3)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## 1d split data
+```{r}
+#Split Actor column into 2 columns First Name and Surname.
+Castdf4 <-separate(Castdf3, 1, into = c("firstName", "Surname"), sep = "[ ](?=[^ ]+$)")
+```
+
+## 1e Present first 10 rows of the data frame
+```{r results= "asis" }
+#Show the first ten rows fo the Castdf4 data frame
+paged_table(head(Castdf4, n= 10))
+```
+
+## 2
+```{r}
+#Read in the HTML of http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs and add it to a data frame called Spurs_dfs
+URL2 <- ("http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs")
+Spurshtml <- read_html(URL2)
+Spursnd <- html_nodes(Spurshtml, "table")
+Spurs_dfs<-html_table(Spursnd, fill = TRUE)
+```
+
+## 2b
+```{r}
+#Look at the tables from the Spurs_dfs and find a list of player and the shooting stats. 
+
+#Getting list of Players
+Players <- Spurs_dfs[[6]]
+Players
+#Getting Shooting Stats
+SStats <- Spurs_dfs [[8]]
+SStats
+```
+
+## 2c 
+```{r}
+#Split the player data into a new data frame with two columns Name and Position called Players2
+Players2 <- separate(Players, 1, into = c("Name", "Position"), sep = -2)
+Players2
+```
+```{r}
+#bind the two data frames into a single data frame called SpursStats
+SpursStats <- cbind(Players2, SStats)
+SpursStats
+```
+```{r}
+#remove the last row with the total data that is not needed
+SpursStats2 <-slice(SpursStats, -c(14))
+SpursStats2
+```
+
+## 2d Plot Field Goal % Per Game
+```{r}
+#Plot Field goal percentage per game by each player
+Spursplot <- ggplot(SpursStats2, aes(x = Name, y = `FG%`, fill = SpursStats2$Position)) + geom_bar(stat = "identity") + coord_flip() + ggtitle("Field Goal % Per Game") + theme(plot.title = element_text(hjust = 0.5)) + labs(x = "Players", y = "Field Goal %", fill = "Position") 
+Spursplot
