@@ -10,17 +10,32 @@ Keep_md: True
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# 1a
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+#Download the yob2016.txt data
+path <- "https://raw.githubusercontent.com/BivinSadler/MSDS-6306-Doing-Data-Science/master/Unit%205/yob2016.txt"
+download.file(path, destfile = "yob2016.txt")
+df <- read.delim("yob2016.txt", header = FALSE, sep = ";")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#View head data
+head(df)
 
-```{r cars}
-summary(cars)
+#Rename column headers to human readable
+names(df)[1] <- "First Name"
+names(df)[2] <- "Gender"
+names(df)[3] <-"Amount of childern"
+head(df)
 ```
 
-## Including Plots
+# 1b
+```{r}
+#Summary of df
+summary(df)
+
+#Sturcture of df
+str(df)
+```
 
 You can also embed plots, for example:
 
