@@ -37,10 +37,95 @@ summary(df)
 str(df)
 ```
 
-You can also embed plots, for example:
+# 1c find name that ends in three y's
+```{r}
+#Find a patern of three y's in the First Name column
+grep("yyy", df$`First Name`)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#View the row with the misspelled name
+df[212,]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# 1d remove the misspelled name
+```{r}
+#Install the dplyr library to use slice 
+library(dplyr)
+#remove the row with the misspelled word and recalculate ".preserve = FALSE" the position values after removing the rows. Name this new daata frame y2016
+y2016 <- slice(df, -c(212), .preserve = FALSE)
+
+#check to make sure the row of data has been removed by running the patern matching again
+grep("yyy", y2016$`First Name`)
+```
+
+# 2a Import yob2015.txt data
+```{r}
+#URL of yob2015.txt data
+path <- "https://raw.githubusercontent.com/BivinSadler/MSDS-6306-Doing-Data-Science/master/Unit%205/yob2015.txt"
+
+#Download yob2015.txt to working directory
+download.file(path, destfile = "yob2015.txt")
+
+#Create a data frame from the yob2015 data called y2015
+y2015 <- read.delim("yob2015.txt", header = FALSE, sep = ",")
+
+#Make the column names in y2015 data frame human readable
+names(y2015)[1] <- "First Name"
+names(y2015)[2] <- "Gender"
+names(y2015)[3] <-"Amount of childern"
+```
+
+# 2b Display the last ten rows of the y2015 data frame
+#### Observation of last ten rows: The last ten rows are all males and there are only five children with each name.
+```{r}
+tail(y2015, 10)
+```
+
+# 2c Merge y2015 and y2016 by first name
+```{r}
+#Create a new data frame called final. Inner join y2015 and y2016 data frames on First name
+final <- merge(y2015, y2016, by = "First Name")
+
+#View the first few rows of final
+head(final)
+
+#Remove the extra row containing gender info
+final <- subset(final, select = -c(Gender.y))
+
+#View the first few rows of final
+head(final)
+
+#rename the last three columns "Gender", "Amount of Children 2015", "Amount of Children 2016"
+names(final)[2] <- "Gender"
+names(final)[3] <-"Amount of childern 2015"
+names(final)[4] <-"Amount of childern 2016"
+
+#View the first few rows of final
+head(final)
+```
+
+# 3a Create a total column
+```{r}
+#Create a new column called total with the number of people given each name combined for both years.
+final$Total <- final[,3] + final[,4]
+
+#See the first few rows.
+head(final)
+```
+
+# 3b Sort the data and display the top 10 names
+```{r}
+#Create a new data frame called Finaldec that shows names in order of most popular to least. 
+Finaldec <- final[order(-final$Total),]
+
+#Show the top ten names
+head(Finaldec, 10)
+```
+
+# 3c Top 10 girl names
+```{r}
+#Create a new data set called JustGirls that filters boys out of the finaldec data set.
+JustGirls <- filter(Finaldec, Gender == "F")
+
+#View the top 10 girl names.
+head(JustGirls, 10)
+```
