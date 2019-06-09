@@ -20,15 +20,14 @@ Homework_Unit5.html - This is the unit 5 homework in html for convienitent displ
 GirlsTop10Names.csv - This file contains the top ten Female names sourced from yob2015.txt and yob2016.txt
 
 <b>R Version and System Info</b><br>
-Platform: "x86_64-apple-darwin15.6.0"
+Platform: "x86_64-apple-darwin15.6.0"<br>
 R version: "R version 3.5.3 (2019-03-11)"
 
 <b>R Packagees Used</b><br>
-<body>
 utils
 base
 dplyr
-</body>
+
 
 <b>R Objects</b>
 <body>
