@@ -28,7 +28,8 @@ base<br>
 dplyr<br>
 
 
-<b>R Objects</b>
+<b>R Objects</b><br>
+
 path - Url path<br>
 df - data frame of yob2016.txt data<br>
 y2016 - data frame of yob2016.txt data tidy<br>
