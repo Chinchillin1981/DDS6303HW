@@ -129,3 +129,16 @@ JustGirls <- filter(Finaldec, Gender == "F")
 #View the top 10 girl names.
 head(JustGirls, 10)
 ```
+
+# 3c Create top 10 girl names CSV
+```{r}
+#Create an new Data frame called JustGirlsTop10 that has the top ten girl names
+JustGirlsTop10 <- JustGirls[c(1:10),]
+
+#Subset the data to only include First name and Total
+JustGirlsTop10 <- subset(JustGirlsTop10, select = -c(Gender, `Amount of childern 2015`, `Amount of childern 2016`))
+JustGirlsTop10
+
+#Write CSV file called GirlsTop10Names
+write.csv(JustGirlsTop10, file = "GirlsTop10Names.csv")
+```

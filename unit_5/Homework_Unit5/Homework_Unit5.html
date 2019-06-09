@@ -597,6 +597,28 @@ head(JustGirls, 10)</code></pre>
 ## 9       Emily      F                   11766                   10926 22692
 ## 10     Harper      F                   10283                   10733 21016</code></pre>
 </div>
+<div id="c-create-top-10-girl-names-csv" class="section level1">
+<h1>3c Create top 10 girl names CSV</h1>
+<pre class="r"><code>#Create an new Data frame called JustGirlsTop10 that has the top ten girl names
+JustGirlsTop10 &lt;- JustGirls[c(1:10),]
+
+#Subset the data to only include First name and Total
+JustGirlsTop10 &lt;- subset(JustGirlsTop10, select = -c(Gender, `Amount of childern 2015`, `Amount of childern 2016`))
+JustGirlsTop10</code></pre>
+<pre><code>##    First Name Total
+## 1        Emma 39829
+## 2      Olivia 38884
+## 3      Sophia 33451
+## 4         Ava 32577
+## 5    Isabella 30296
+## 6         Mia 29237
+## 7   Charlotte 24411
+## 8     Abigail 24070
+## 9       Emily 22692
+## 10     Harper 21016</code></pre>
+<pre class="r"><code>#Write CSV file called GirlsTop10Names
+write.csv(JustGirlsTop10, file = &quot;GirlsTop10Names.csv&quot;)</code></pre>
+</div>
 
 
 
