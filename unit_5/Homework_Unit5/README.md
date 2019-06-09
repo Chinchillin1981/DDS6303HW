@@ -24,13 +24,14 @@ Platform: "x86_64-apple-darwin15.6.0"<br>
 R version: "R version 3.5.3 (2019-03-11)"
 
 <b>R Packagees Used</b><br>
+
 utils
 base
 dplyr
 
 
 <b>R Objects</b>
-<body>
+
 path - Url path
 df - data frame of yob2016.txt data<br>
 y2016 - data frame of yob2016.txt data tidy
@@ -39,4 +40,4 @@ final - y2015 and y2016 merged on common First names
 finaldec - data frame with final data sorted in decending order
 JustGirls - finaldec data filtered on just girls
 JustGirlsTop10 - JustGirls subsetted data to display the top ten girl names and total children with that name
-</body>
+
