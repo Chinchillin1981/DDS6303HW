@@ -1,0 +1,47 @@
+---
+title: "Homework_Unit6"
+author: "Matt Chinchilla"
+date: "6/14/2019"
+output: html_document
+Keep_md: True
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1b State abbreviations without their counts.
+```{r}
+#Load the data
+load(file = "./N-MHSS-2015-DS0001-data-r.rda")
+
+#Knitr library
+library(knitr)
+
+#Find unique state abbreviations (Factors)
+st <- unique(mh2015_puf$LST)
+
+#Display list of unique state abbreviations (Display factors in html friendly format)
+kable(head(st), format = "html", col.names = "States")
+```
+
+### 1c Veterans Veterans Administration (VA) medical centers in the mainland United States
+
+```{r}
+#dplyr Library
+library(dplyr)
+
+#Create a subset of mh2015 data to isolate only the VA facilitiesn
+VA <- subset(mh2015_puf, FACILITYTYPE == "Veterans Administration medical center (VAMC) or other VA health care facility")
+
+#Remove all rows with states or territories outside of the US mainland
+VA2 <- VA %>% filter(!LST %in% c("HI    ", "AK    ", "VI    ", "PR    " ))
+
+#Create a data frame of counts of VA hospitals in each state called VACount
+VACount <- VA2 %>% count(LST)
+
+#Rename the columns VACount to State and Count
+names(VACount) <- c("State", "Count")
+
+kable(head(VACount), format = "html")
+```
