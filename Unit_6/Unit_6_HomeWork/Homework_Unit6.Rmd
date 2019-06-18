@@ -45,3 +45,77 @@ names(VACount) <- c("State", "Count")
 
 kable(head(VACount), format = "html")
 ```
+
+### 1d Create a ggplot barchart of filtered data
+```{r}
+#Load ggplot2 library
+library(ggplot2)
+
+#Create Bar chart of VACount data
+VABar <- ggplot(VACount, aes(reorder(VACount$State, -VACount$Count), y = VACount$Count, fill = VACount$State)) + geom_bar(stat = "identity") +ggtitle("VA Count Per State")+ theme(legend.position = "none", plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90)) + labs(x = "State", y = "Count of VA Hospitals") 
+
+#Display Bar chart
+VABar
+```
+
+### 2a Observation: There are extra spaces in the formating of the state abbreviations in the VA data.
+```{r}
+#Download statesize.csv file from https://raw.githubusercontent.com/Chinchillin1981/MSDS-6306-Doing-Data-Science/master/Unit%206/statesize.csv
+#download.file(URL, destfile = "statesize.csv")
+
+#Read statesize.csv file into global environment
+statesize <- read.csv(file = "./statesize.csv")
+
+#Look at format of State in VACount 
+head(paste(VACount$State))
+
+#Look at format of State in statesize
+head( paste(statesize$Abbrev))
+```
+
+### 2b 
+```{r}
+#Trim the white spaces on the State abbreviations in VACount
+VACount[] <- lapply(VACount, function(x) if (is.factor(x)) sub(" +$", "",x) else x)
+
+#Check trim
+head(paste(VACount$State))
+```
+
+```{r}
+#Merge VACount and Statesize 
+VAState <- merge(VACount,statesize, by.x = "State", by.y = "Abbrev", all.x = TRUE)
+
+#Check merge data
+head(VAState)
+```
+
+
+### 2c Create a new column that is a calculation of the number of VA facilites per 1000 square miles in each state.
+```{r}
+#Create a new column VAPerThousandSqMiles 
+VAState$VAPerThousandSqMiles <- VAState$Count/(VAState$SqMiles/1000)
+
+head(VAState)
+```
+
+### 2d Plot VAs per 1000 square mile in a bar plot.
+```{r}
+#Load ggplot Library
+library(ggplot2)
+
+#Plot the VA Hospitals Per 1000 sqMile
+p<-ggplot(VAState ,aes(reorder(VAState$State,-VAPerThousandSqMiles),VAPerThousandSqMiles, fill=Region)) + geom_bar(stat='identity')+ theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90))+ ggtitle("VA Per 1000 SqMiles in Each State") + labs(x = "State", y = "Number of VA Per 1000 SqMile") + scale_fill_manual(values = c("Blue", "red","orange","green"))
+
+#Display Plot
+p
+```
+
+### 2e 
+##### Observations:
++ The Northeast region has the highest number of VA's per 1000 SqMiles 
++ The West region has a very low number of VA's per 1000 SqMiles
+
+##### Advice:
+My advice to my boss at this point would be that we should gather information related to Veterans and where they are located. The thinking being that we should take the information we have gathered so far and focus on finding areas that have a high concentration of Veterans and no VA center within at least a 1000 mile radius. These areas are probably the locations where a new VA hospital would do the most good. 
+
