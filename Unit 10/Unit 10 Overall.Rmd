@@ -47,6 +47,9 @@ dfMPG %>% ggplot(aes(Weight,MPG)) +
 
 ### Parameter Estimte Table and Distributions of Sample Intercept and Slope
 ```{r}
+library(ggplot2)
+library(knitr)
+library(dplyr)
 #Toy data set with miles per gallon versus weight
 dfMPG = data.frame(MPG = c(42,40,38,28,32,30,18,20,22), Weight = c(1,1,1,2,2,2,3,3,3))
 
