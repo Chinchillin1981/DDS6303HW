@@ -10,7 +10,7 @@ keep_md: true
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE}
 #Libraries
 library(dplyr)
 library(ggplot2)
@@ -60,11 +60,40 @@ p + facet_grid(State ~.)
 ```
 
 
-#### C. Model Data
+#### C. Model Texas and Colorado Data
 ```{r}
 #Split beerCOTX by state
 
 #Texas Breweries
 beerTX <- filter(beerCOTX, State == "TX")
+
+#Calculate coeficients
+lmtx <- lm(ABV ~ IBU, data = beerTX)
+
+#Grab coefficients data
+coefs <- coef(lmtx)
+
+#Plot using base plot function.
+plot(beerTX$IBU, beerTX$ABV, pch=20, col = "red", xlab = "IBU", ylab = "ABV", main = "ABV vs IBU Texas")
+abline(coefs[1], coefs[2], col = "blue")
+
+summary(lmtx)
 ```
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+#Split beerCOTX by state
+
+#Colorado Breweries
+beerCO <- filter(beerCOTX, State == "CO")
+
+#Calculate coeficients
+lmco <- lm(ABV ~ IBU, data = beerCO)
+
+#Grab coefficients data
+coefs1 <- coef(lmco)
+
+#Plot using base plot function.
+plot(beerCO$IBU, beerCO$ABV, pch=20, col = "red", xlab = "IBU", ylab = "ABV", main = "ABV vs IBU Colorado")
+abline(coefs1[1], coefs1[2], col = "blue")
+
+summary(lmco)
+```
