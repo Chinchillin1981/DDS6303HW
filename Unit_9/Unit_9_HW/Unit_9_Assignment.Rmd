@@ -16,6 +16,9 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 library(kableExtra)
+library(sjPlot)
+library(sjlabelled)
+library(sjmisc)
 ```
 
 
@@ -96,4 +99,12 @@ plot(beerCO$IBU, beerCO$ABV, pch=20, col = "red", xlab = "IBU", ylab = "ABV", ma
 abline(coefs1[1], coefs1[2], col = "blue")
 
 summary(lmco)
+```
+#### D. Gain inference from the model
+```{r}
+#Parameter estimate table TX
+tab_model(lmtx)
+
+#Parameter estimate table CO
+tab_model(lmco)
 ```
