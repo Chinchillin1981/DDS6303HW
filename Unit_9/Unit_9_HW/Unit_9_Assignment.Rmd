@@ -45,12 +45,12 @@ beerCOTX <- beerCOTX %>% na.omit(beerCOTX$IBU)
 beerCOTX <- beerCOTX %>% arrange(IBU)
 ```
 
-#### Plot ABV v. IBU for both Colorado and Texas in seperate plots
+#### B. Create Initial plots of the data
 ```{r}
 #Plot IBU and ABV for all values in beerCOTX and assign to variable p
 p <- ggplot(beerCOTX, aes(IBU, ABV)) + geom_point()
 
-#Split the previous plot into two plots based on state
+#Split the previous plot into two based on state
 p + facet_grid(State ~.)
 ```
 
