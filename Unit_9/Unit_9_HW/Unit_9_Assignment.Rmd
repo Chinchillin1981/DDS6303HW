@@ -59,4 +59,12 @@ p <- ggplot(beerCOTX, aes(IBU, ABV)) + geom_point()
 p + facet_grid(State ~.)
 ```
 
+
+#### C. Model Data
+```{r}
+#Split beerCOTX by state
+
+#Texas Breweries
+beerTX <- filter(beerCOTX, State == "TX")
+```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
