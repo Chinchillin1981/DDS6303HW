@@ -395,12 +395,8 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 library(kableExtra)
-library(sjPlot)</code></pre>
-<pre><code>## Warning in checkMatrixPackageVersion(): Package version inconsistency detected.
-## TMB was built with Matrix version 1.2.15
-## Current Matrix version is 1.2.17
-## Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</code></pre>
-<pre class="r"><code>library(sjlabelled)
+library(sjPlot)
+library(sjlabelled)
 library(sjmisc)</code></pre>
 <div id="a.-clean-an-prepare-the-data" class="section level4">
 <h4>A. Clean an prepare the Data:</h4>
@@ -744,7 +740,9 @@ abline(coefs1[1], coefs1[2], col = &quot;blue&quot;)</code></pre>
 </div>
 <div id="d.-gain-inference-from-the-model" class="section level4">
 <h4>D. Gain inference from the model</h4>
-<pre class="r"><code>#Parameter estimate table TX
+<div id="the-texas-model-has-an-r2-variance-of-65-adjusted-to-64.-this-shows-me-the-model-can-explane-over-50-of-the-variance-in-abv." class="section level5">
+<h5>The Texas model has an R^2 variance of 65% adjusted to 64%. This shows me the model can explane over 50% of the variance in ABV.</h5>
+<pre class="r"><code>#Parameter estimate table Texas
 tab_model(lmtx)</code></pre>
 <table style="border-collapse:collapse; border:none;">
 <tr>
@@ -814,7 +812,10 @@ R<sup>2</sup> / adjusted R<sup>2</sup>
 </td>
 </tr>
 </table>
-<pre class="r"><code>#Parameter estimate table CO
+</div>
+<div id="the-colorado-model-has-an-r2-variance-of-34.5-adjusted-to-33.6.-this-shows-me-the-model-can-explane-less-than-50-of-the-variance-in-abv.-this-is-probably-not-a-good-model-for-colorado." class="section level5">
+<h5>The Colorado model has an R^2 variance of 34.5% adjusted to 33.6%. This shows me the model can explane less than 50% of the variance in ABV. This is probably not a good model for Colorado.</h5>
+<pre class="r"><code>#Parameter estimate table Colorado
 tab_model(lmco)</code></pre>
 <table style="border-collapse:collapse; border:none;">
 <tr>
@@ -884,6 +885,7 @@ R<sup>2</sup> / adjusted R<sup>2</sup>
 </td>
 </tr>
 </table>
+</div>
 </div>
 
 

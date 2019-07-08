@@ -101,10 +101,15 @@ abline(coefs1[1], coefs1[2], col = "blue")
 summary(lmco)
 ```
 #### D. Gain inference from the model
-```{r}
-#Parameter estimate table TX
-tab_model(lmtx)
 
-#Parameter estimate table CO
+##### The Texas model has an R^2 variance of 65% adjusted to 64%. This shows me the model can explane over 50% of the variance in ABV.
+```{r}
+#Parameter estimate table Texas
+tab_model(lmtx)
+```
+
+##### The Colorado model has an R^2 variance of 34.5% adjusted to 33.6%. This shows me the model can explane less than 50% of the variance in ABV. This is probably not a good model for Colorado.
+```{r}
+#Parameter estimate table Colorado
 tab_model(lmco)
 ```
