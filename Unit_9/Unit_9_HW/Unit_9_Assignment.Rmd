@@ -113,3 +113,8 @@ tab_model(lmtx)
 #Parameter estimate table Colorado
 tab_model(lmco)
 ```
+
+
+```{r}
+
+```
