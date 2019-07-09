@@ -23,29 +23,47 @@ library(sjmisc)
 
 
 #### A. Clean an prepare the Data:
+
+##### Download Data
 ```{r}
 #Create Data frame for Beers.csv data
 Beers <- read.csv("./Beers.csv")
 
 #Create data frame for Breweries.cvs
 Breweries <- read.csv("./Breweries.csv")
+```
 
+
+##### 2. Merge Data into data frame
+```{r}
 #Merge into new dataframe BeersBreweries
 BeersBreweries <- inner_join(Beers,Breweries, by = c("Brewery_id" = "Brew_ID"))
 
 #Rename columns from Name.x and Name.y to Beer_Name and Brewery_Name 
 names(BeersBreweries)[1] <- c("Beer_Name")
 names(BeersBreweries)[8] <- c("Brewery_Name")
+```
 
+
+##### 3. Clean white spaces in State abbreviations.
+```{r}
 #trim the white space in state abbreviations 
 BeersBreweries$State <- trimws(BeersBreweries$State)
+```
 
+
+##### 4. Create Data frame beerCOTX with only Colorado and Texas beers. Exclude NA's from new data frame
+```{r}
 #Create subset of BeersBreweries with only Texas and Colorado Breweries 
 beerCOTX <- filter(BeersBreweries, State == c("TX","CO"))
 
 #Omit all rows from beerCOTX with null value for IBU
 beerCOTX <- beerCOTX %>% na.omit(beerCOTX$IBU)
+```
 
+
+##### 5. Order beerCOTX by IBU asscending. View data.
+```{r}
 #Arrange Rows in ascending order by IBU
 beerCOTX <- beerCOTX %>% arrange(IBU)
 
@@ -53,7 +71,9 @@ beerCOTX <- beerCOTX %>% arrange(IBU)
 kable(head(beerCOTX)) %>% kable_styling(bootstrap_options = "striped")
 ```
 
-#### B. Create Initial plots of the data
+#### B. 
+
+##### 6. Create Initial plots of Texas and Colorado Data
 ```{r}
 #Plot IBU and ABV for all values in beerCOTX and assign to variable p
 p <- ggplot(beerCOTX, aes(IBU, ABV)) + geom_point()
@@ -63,7 +83,9 @@ p + facet_grid(State ~.)
 ```
 
 
-#### C. Model Texas and Colorado Data
+#### C. Model the data
+
+##### 7a. Texas model
 ```{r}
 #Split beerCOTX by state
 
@@ -79,9 +101,9 @@ coefs <- coef(lmtx)
 #Plot using base plot function.
 plot(beerTX$IBU, beerTX$ABV, pch=20, col = "red", xlab = "IBU", ylab = "ABV", main = "ABV vs IBU Texas")
 abline(coefs[1], coefs[2], col = "blue")
-
-summary(lmtx)
 ```
+
+##### 7b. Colorado Model
 ```{r}
 #Split beerCOTX by state
 
@@ -97,14 +119,102 @@ coefs1 <- coef(lmco)
 #Plot using base plot function.
 plot(beerCO$IBU, beerCO$ABV, pch=20, col = "red", xlab = "IBU", ylab = "ABV", main = "ABV vs IBU Colorado")
 abline(coefs1[1], coefs1[2], col = "blue")
-
-summary(lmco)
 ```
-#### D. Gain inference from the model
-```{r}
-#Parameter estimate table TX
-tab_model(lmtx)
+##### 8. Address the assumptions of the regression model.
 
-#Parameter estimate table CO
+##### 8a. Both sampling sizes are greater than 30 so we can assume the distribution to be normal per the central limit theorm.
+```{r}
+#Texas
+length(beerTX$Beer_ID)
+
+#Colorado
+length(beerCO$Beer_ID)
+```
+
+
+##### 8b. The normal distributions for Texas and Colorado do not have equal standard deviations.
+```{r}
+# Standard deviation Texas
+sd(beerTX$ABV)
+
+# Standard deviation Colorado
+sd(beerCO$ABV)
+```
+##### 8c.The mean of the distributions have a linear relationship to IBU
+
+
+##### 8d. Independance
+
+
+#### D. Gain inference from the model
+
+##### 9a. The Texas model has an R^2 variance of 65% adjusted to 64%. This shows me the model can explane over 50% of the variance in ABV.
+```{r}
+#Parameter estimate table Texas
+tab_model(lmtx)
+```
+
+##### 9b. The Colorado model has an R^2 variance of 34.5% adjusted to 33.6%. This shows me the model can explane less than 50% of the variance in ABV. This is probably not a good model for Colorado.
+```{r}
+#Parameter estimate table Colorado
 tab_model(lmco)
+```
+
+##### 9c. Based on my observations there does seem to be evidence that the relationship between ABV and IBU are diffent in Texas and Colorado.
+
+##### 10 ??
+
+#### E. Compare two competing models
+
+##### 11. Create a new column IBU2 with the square of IBU for each row. 
+```{r}
+#Add column IBU2 to beerCOTX data frame.
+beerCOTX$IBU2 <- beerCOTX$IBU ^ 2
+
+#Confirm new column
+kable(head(beerCOTX)) %>% kable_styling(bootstrap_options = "striped")
+```
+
+##### 12a. Split the beerCOTX data into training and test data frames based on state
+
+##### Texas training and test data frames
+```{r}
+# Filter on Texas data
+beerTX <- filter(beerCOTX, State == "TX")
+
+# Create random sample set of Texas training observations based on 60% data for training
+TrainObs = sample(seq(1,dim(beerTX)[1]),round(.60*dim(beerTX)[1]), replace = FALSE)
+
+# Create data frame of training observations
+TrainingTX <- beerTX[TrainObs,]
+
+# Summary of TrainingTX
+summary(TrainingTX)
+
+# Create a data frame of test observations
+TestTX <- beerTX[-TrainObs,]
+
+# Summary of TrainingTX
+summary(TestTX)
+```
+
+#### Colorado training and test data frames
+```{r}
+# Filter on Texas data
+beerCO <- filter(beerCOTX, State == "CO")
+
+# Create random sample set of Texas training observations based on 60% data for training
+TrainObs1 = sample(seq(1,dim(beerCO)[1]),round(.60*dim(beerCO)[1]), replace = FALSE)
+
+# Create data frame of training observations
+TrainingCO <- beerCO[TrainObs1,]
+
+# Summary of TrainingCO
+summary(TrainingCO)
+
+# Create a data frame of test observations
+TestCO <- beerCO[-TrainObs1,]
+
+# Summary of TestCO
+summary(TestCO)
 ```
