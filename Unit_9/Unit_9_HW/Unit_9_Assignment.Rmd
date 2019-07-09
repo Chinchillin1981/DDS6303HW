@@ -122,7 +122,7 @@ abline(coefs1[1], coefs1[2], col = "blue")
 ```
 ##### 8. Address the assumptions of the regression model.
 
-##### 8a. Both sampling sizes are greater than 30 so we can assume the distribution to be normal per the central limit theorm.
+##### 8a. 
 ```{r}
 #Texas
 length(beerTX$Beer_ID)
@@ -140,10 +140,10 @@ sd(beerTX$ABV)
 # Standard deviation Colorado
 sd(beerCO$ABV)
 ```
-##### 8c.The mean of the distributions have a linear relationship to IBU
+##### 8c.The mean of the distributions have a linear relationship to IBU??? Also not sure how to do this
 
 
-##### 8d. Independance
+##### 8d. Independance ??? Not sure how to do this
 
 
 #### D. Gain inference from the model
@@ -162,7 +162,7 @@ tab_model(lmco)
 
 ##### 9c. Based on my observations there does seem to be evidence that the relationship between ABV and IBU are diffent in Texas and Colorado.
 
-##### 10 ??
+##### 10 I have no idea???
 
 #### E. Compare two competing models
 
@@ -198,7 +198,7 @@ TestTX <- beerTX[-TrainObs,]
 summary(TestTX)
 ```
 
-#### Colorado training and test data frames
+##### Colorado training and test data frames
 ```{r}
 # Filter on Texas data
 beerCO <- filter(beerCOTX, State == "CO")
@@ -218,3 +218,134 @@ TestCO <- beerCO[-TrainObs1,]
 # Summary of TestCO
 summary(TestCO)
 ```
+
+##### 13 compare model1 and model2
+
+##### Model 1 Texas
+```{r}
+#Train model1 Texas
+model1tx <- lm(ABV ~ IBU, data = TrainingTX)
+
+#Predictions based on model1tx
+model1tx_preds <- predict(model1tx, newdata = TestTX)
+as.data.frame(model1tx_preds)
+
+#Model1tx MSPE
+MSPETX1 = mean((TestTX$ABV - model1tx_preds)^2)
+MSPETX1
+```
+##### Model 2 Texas
+```{r}
+#Train model2 Texas
+model2tx <- lm(ABV ~ IBU + IBU2, data = TrainingTX)
+
+#Predictions based on model1tx
+model2tx_preds <- predict(model2tx, newdata = TestTX)
+as.data.frame(model2tx_preds)
+
+#Model2tx MSPE
+MSPETX2 = mean((TestTX$ABV - model2tx_preds)^2)
+MSPETX2
+```
+
+##### Check stability of Model 1 vs Model 2 Texas
+```{r}
+numMSPEs = 1000
+MSPEHolderModel1 = numeric(numMSPEs)
+MSPEHolderModel2 = numeric(numMSPEs)
+
+for (i in 1:numMSPEs)
+{
+  TrainObs = sample(seq(1,dim(beerTX)[1]),round(.60*dim(beerTX)[1]), replace = FALSE)
+  TrainingTX <- beerTX[TrainObs,]
+  TrainingTX
+  TestTX <- beerTX[-TrainObs,]
+  TestTX
+  model1tx <- lm(ABV ~ IBU, data = TrainingTX)
+  model1tx_preds <- predict(model1tx, newdata = TestTX)
+  
+  #MSPE Model 1
+  MSPETX1 = mean((TestTX$ABV - model1tx_preds)^2)
+ MSPETX1
+  MSPEHolderModel1[i] = MSPETX1
+  
+  #Model 2
+  model2tx <- lm(ABV ~ IBU + IBU2, data = TrainingTX)
+  model2tx_preds <- predict(model2tx, newdata = TestTX)
+  MSPETX2 = mean((TestTX$ABV - model2tx_preds)^2)
+  MSPETX2
+  MSPEHolderModel2[i] = MSPETX2
+  
+}
+
+mean(MSPEHolderModel1)
+mean(MSPEHolderModel2)
+
+```
+
+##### Model 1 Colorado
+```{r}
+#Train model1 Texas
+model1co <- lm(ABV ~ IBU, data = TrainingCO)
+
+#Predictions based on model1tx
+model1co_preds <- predict(model1co, newdata = TestCO)
+as.data.frame(model1co_preds)
+
+#Model1tx MSPE
+MSPECO1 = mean((TestCO$ABV - model1co_preds)^2)
+MSPECO1
+```
+
+##### Model 2 Colorado
+```{r}
+#Train model2 Texas
+model2co <- lm(ABV ~ IBU + IBU2, data = TrainingCO)
+
+#Predictions based on model1tx
+model2co_preds <- predict(model2co, newdata = TestCO)
+as.data.frame(model2co_preds)
+
+#Model2tx MSPE
+MSPECO2 = mean((TestCO$ABV - model2co_preds)^2)
+MSPECO2
+```
+
+
+##### Check stability of Model 1 vs Model 2 Colorado
+```{r}
+numMSPEs = 1000
+MSPEHolderModel1 = numeric(numMSPEs)
+MSPEHolderModel2 = numeric(numMSPEs)
+
+for (i in 1:numMSPEs)
+{
+  TrainObs = sample(seq(1,dim(beerCO)[1]),round(.60*dim(beerCO)[1]), replace = FALSE)
+  TrainingCO <- beerCO[TrainObs,]
+  TrainingCO
+  TestCO <- beerCO[-TrainObs,]
+  TestCO
+  model1co <- lm(ABV ~ IBU, data = TrainingCO)
+  model1co_preds <- predict(model1co, newdata = TestCO)
+  
+  #MSPE Model 1
+  MSPECO1 = mean((TestCO$ABV - model1co_preds)^2)
+ MSPECO1
+  MSPEHolderModel1[i] = MSPECO1
+  
+  #Model 2
+  model2co <- lm(ABV ~ IBU + IBU2, data = TrainingCO)
+  model2tx_preds <- predict(model2co, newdata = TestCO)
+  MSPECO2 = mean((TestCO$ABV - model2co_preds)^2)
+  MSPECO2
+  MSPEHolderModel2[i] = MSPECO2
+  
+}
+
+mean(MSPEHolderModel1)
+mean(MSPEHolderModel2)
+
+```
+```
+
+##### ASE loss function I'm note sure how this helps me decide which model is better? Please explaine. I get that running the mspe in a thosand draws can show stability of a model by how much the value fluctuates. 
