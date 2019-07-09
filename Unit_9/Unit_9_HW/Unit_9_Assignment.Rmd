@@ -162,10 +162,11 @@ tab_model(lmco)
 
 ##### 9c. Based on my observations there does seem to be evidence that the relationship between ABV and IBU are diffent in Texas and Colorado.
 
+##### 10 ??
 
 #### E. Compare two competing models
 
-##### 10. Create a new column IBU2 with the square of IBU for each row. 
+##### 11. Create a new column IBU2 with the square of IBU for each row. 
 ```{r}
 #Add column IBU2 to beerCOTX data frame.
 beerCOTX$IBU2 <- beerCOTX$IBU ^ 2
